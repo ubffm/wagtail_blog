@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% load static wagtailcore_tags wagtailimages_tags compress%}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block extra_css %}
+    {% compress css%}
+        <link type="text/x-scss" href="{% static 'scss/blog.scss' %}" rel="stylesheet" media="screen">
+    {% endcompress css%}
+{% endblock %}
+
+{% block banner%}
+<div class="blog-banner">
+    <div class="container blog-container-margin">
+        <h1 class="text-center">{{page.bannertext}}</h1>
+    </div>
+</div>
+{% endblock%}
+
+{% block content %}
+<div class="blog-container">
+	<nav class="blog-categories-nav navbar nvbar-dark bg-dark" aria-label="breadcrumb">
+        <div class="container container-fluid text-light fs-5">
+            <ol class="breadcrumb mb-0 mt-1 align-middle">
+                <li class="breadcrumb-item"><a class="text-light text-decoration-none" href="/">Home</a></li> 
+                <li class="breadcrumb-item"><a class="text-light text-decoration-none" href="{{page.url}}">{{page.title}}</a></li> 
+                {% if filtered_cat%}<li class="breadcrumb-item"><a class="text-light text-decoration-none" href="{% slugurl filtered_cat.slug %}?categories={{filtered_cat.slug}}">{{filtered_cat}}</a></li>{%endif%}
+            </ol>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
+                <button class="btn btn-secondary" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+	<div class="container content-container">
+		<div class="row pb-5">
+    		{% for entry in blog_entries.all %}
+        		<div class="col-lg-4 col-md-6 col-12 gx-5 gy-5">
+                <div class="blog-entry h-100">
+                  <div class="entry-header p-3">
+        			      {% if entry.banner_image %}<a href="{{ entry.get_url }}">{% image entry.banner_image max-500x500 class="img-fluid" id="blog-entry-banner-image" %}</a>{% endif %}
+        			      <h2><a href="{{ entry.get_url }}">{{ entry.title }}</a></h2>
+                  </div>
+                  <div class="categories">
+        				    <ul>
+        					    {% for category in entry.categories.all %}
+        						    <li><a class="text-decoration-none lh-lg" href="?{%if query%}query={{query}}&{%endif%}categories={{ category.slug }}">{{category|upper}}</a></li>
+        					    {% endfor %}
+        				    </ul>
+                  </div>
+        			  <div class="blog-teaser p-3">{{entry.teaser|truncatechars:200}}</div>
+              </div>
+        		</div>
+    		{% endfor %}
+    	</div>
+	</div>
+</div>
+{% endblock %}

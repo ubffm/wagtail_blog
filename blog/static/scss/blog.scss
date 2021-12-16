@@ -1,0 +1,186 @@
+//Import your main SCSS here. Needs Bootstrap 5
+@import '';
+
+$blog-bg-color: white;
+$blog-header-bg: white;
+$blog-entry-bg: gray;
+$blog-categories-bg: gray;
+
+$box-borders: $blog-header-bg;
+$dark-box-color: #333;
+
+$blog-light-text: $blog-bg-color;
+$blog-muted-text: $blog-entry-bg;
+
+body {
+    background-color: white !important;
+}
+
+.nav-banner-bg{
+    
+    //Put your banner background images here
+    @include media-breakpoint-up(md){
+        background-image: url();
+        background-repeat: repeat round;
+        background-position: top left;
+        background-position-y: 0; //position fix for Safari
+        background-position-x: 0; //position fix for Safari
+    }
+
+    @include media-breakpoint-down(md){
+        background-image: url();
+        background-repeat: round repeat;
+        background-position: top left;
+        background-position-y: 0; //position fix for Safari
+        background-position-x: 0; //position fix for Safari
+    }    
+}
+
+.breadcrumb{
+
+    @include media-breakpoint-down(md){
+        display: none;
+    }
+}
+
+.blog-banner{
+
+
+    @include media-breakpoint-up(md){
+        height: 20rem;
+
+        .blog-container-margin{
+            padding-top: 3rem;
+        }
+
+        h1{
+            font-size: calc(3rem + 1.5vw);
+        }
+    }
+
+    @include media-breakpoint-down(md){
+        height: 8rem; 
+
+        .blog-container-margin{
+            padding-top: 1rem;
+        }
+    }    
+}
+
+
+.blog-teaser{
+    white-space: normal;
+    color: #276368;
+}
+
+.blog-categories-nav{
+
+    .text-light {
+        color: $blog-light-text !important;
+    }
+}
+
+.blog-container{
+    background-color: $blog-bg-color;
+}
+
+
+.blog-header{
+
+    background-color: $blog-header-bg;
+
+    h1 {
+        padding-top: .5rem;
+    }
+
+}
+
+.blog-content{
+
+}
+
+.blog-entry {
+    background-color: $blog-entry-bg;
+
+    .entry-header{
+        background-color: $blog-header-bg;
+
+        a{
+            text-decoration: none;
+        }
+    }
+
+    .categories {
+        
+        ul{
+            padding: 1rem;
+            list-style: none;
+
+            li {
+                display: inline;
+            }
+        }
+
+        a{  
+            padding-left: .66rem;
+            padding-right: .66rem;
+            background-color: $blog-categories-bg;
+            color: $blog-muted-text; 
+            font-weight: 600;
+            font-size: .9rem;
+        }
+    }
+}
+
+.blog-main-content{
+
+    .blog-content-panel{
+        overflow: auto;
+
+        section {
+            @extend .fs-5;
+        }
+
+        .blog-content-paragraph{
+            @extend .lh-base;
+        }
+    }
+
+    #blog-meta-panel{
+        
+        #blog-buttons{
+            border: 1px solid $box-borders;
+            border-bottom: 0;
+            background-color: $dark-box-color;
+
+            .nav-link{
+                @extend .nav-link;
+                color: $light;
+                padding: 0;
+
+                &:hover{
+                    color: $primary;
+                }
+            }
+
+        }
+
+        .meta-panel-content{
+            border: 1px solid $box-borders;
+        }    
+    }
+
+    h2 {
+        border-bottom: 2px solid $box-borders;
+    }
+
+    .tag{
+        padding-left: .33rem;
+        padding-right: .33rem;
+        text-decoration: none;
+        background-color: $blog-categories-bg;
+        color: $blog-muted-text; 
+        font-size: .9rem;
+    }
+    
+}

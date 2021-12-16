@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags social_share compress static%}
+{% load wagtailimages_tags%}
+
+{% block extra_css %}
+    {% compress css%}
+        <link type="text/x-scss" href="{% static 'scss/blog_page.scss' %}" rel="stylesheet" media="screen">
+    {% endcompress css%}
+{% endblock %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<div class="blog-container">
+    <nav class="blog-categories-nav navbar navbar-dark bg-dark" aria-label="breadcrumb">
+        <div class="container container-fluid text-light fs-5">
+            <ol class="breadcrumb mb-0 mt-1 align-middle">
+                <li class="breadcrumb-item"><a class="text-light text-decoration-none" href="{{page.get_parent.get_parent.url}}">{{page.get_parent.get_parent.title}}</a></li> 
+                <li class="breadcrumb-item"><a class="text-light text-decoration-none" href="{{page.get_parent.url}}">{{page.get_parent.title}}</a></li> 
+                <li class="breadcrumb-item">{% with page.categories.all|first as primary_category %} <a class="text-light text-decoration-none" href="{{page.get_parent.url}}?categories={{primary_category.slug}}">{{primary_category}}</a>{% endwith %}</li>
+                <li class="breadcrumb-item active"><a class="text-light text-decoration-none" href="{{page.url}}">{{page.title}}</a></li>
+            </ol>
+            <form class="d-flex" action="{{ page.get_parent.url }}">
+                <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
+                <button class="btn btn-secondary" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+    <header class="blog-header"> 
+        <div class="container pt-5 pb-5">
+            <div class="col-12">
+                <h1 class="text-center mb-5">{{page.title}}</h1>
+            </div>
+            <div class="col-12">
+                <p class="text-secondary text-center fs-5">{{page.teaser}}</p>
+            </div>
+            <div class="col-6 offset-3 text-center p-2">
+                <span class="text-secondary">{{page.date}}</span>
+            </div>
+        </div>
+    </header>
+    <div class="blog-main-content container content-container">
+        <div class="row">
+            <article id="blog-article" class="blog-content blog-content-panel col-lg-8 col-md-12 p-5">
+                {% if page.banner_image%}
+                    <section id="blog-teaser-image">
+                        {% image page.banner_image original class="img-fluid pb-4" id="blog-banner-image" alt=page.banner_image_alt_text%}
+                    </section>
+                {% endif %}
+                 
+                    {% for block in page.body %}
+                        <section class="blog-content-{{ block.block_type }}">
+                            {% if block.block_type == 'heading' %}
+                                <h1>{{ block.value }}</h1>
+                            {% elif block.block_type == 'sub_heading' %}
+                                <h2>{{ block.value}}</h2>
+                            {% elif block.block_type == 'image' %}
+                                {% image block.value max-1200x1200 class="img-fluid"%}           
+                            {% else %}
+                                    {% include_block block %}
+                            {% endif %}
+                        </section>
+                    {% endfor %}
+            </article>
+            <div id="blog-meta-panel" class="col-lg-4 col-md-12 pt-lg-5 p-lg-0 p-5 text-center">
+                <div class="row">
+                    <div id="blog-buttons" class="col-12">
+                        <div class="row">
+                            <div class="col-6 pt-5 pb-5">
+                               <a href="{{previous}}" class="text-decoration-none text-secondary nav-link fw-bold fs-4 {% if previous == '#'%} disabled {% endif %}">&lt; PREV</a>
+                            </div>  
+                            <div class="col-6 pt-5 pb-5">
+                                <a href="{{next}}" class="text-decoration-none text-secondary fw-bold fs-4 nav-link {% if next == '#'%} disabled {% endif %}">NEXT &gt;</a>
+                            </div>
+                        </div>                     
+                    </div>
+                </div>
+                <div class="row meta-panel-content pt-4">
+                    <div id="blog-categories" class="row pb-4">
+                        <div class="offset-lg-2 col-lg-8 offset-3 col-6">
+                            <h2>Categories</h2>
+                            {% for category in page.categories.all %}
+                                <a class="tag fs-5 p-1 lh-lg text-decoration-none" href="{{ page.get_parent.url }}?categories={{ category.slug }}">{{ category }}</a>
+                            {% endfor%}
+                        </div>
+                    </div>
+                    {% comment %}
+                    {# uncomment to show tags #}
+                    <div id="blog-tags" class="row pb-4">
+                        <div class="offset-lg-2 col-lg-8 offset-3 col-6">
+                            <h2>Tags</h2>
+                            {% for tag in page.tags.all %}
+                                <a class="tag fs-5 p-1 lh-lg text-decoration-none" href="{{ page.get_parent.url }}?tag={{ tag.slug }}">{{ tag }}</a>
+                            {% endfor%}
+                        </div>
+                    </div>
+                    {% endcomment %}
+                    <div id="blog-share" class="row pb-4">
+                        <div class="offset-lg-2 col-lg-8 offset-3 col-6">
+                            <h2>Share</h2>
+                            <div class="share-icons">
+                                {% post_to_facebook page.full_url '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>' %}
+                                {% post_to_twitter '' page.full_url '<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-twitter" viewBox="0 0 16 16"><path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/></svg>'%}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="blog-similar" class="row pb-4">
+                        <div class="offset-lg-2 col-lg-8 offset-3 col-6">
+                            <h2>Similar</h2>
+                            {% for item in similar.all %}
+                                <a href="{{item.url}}" class="lh-lg text-decoration-none">{{item.title}}</a><br>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
